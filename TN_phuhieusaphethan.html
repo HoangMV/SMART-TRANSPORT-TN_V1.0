@@ -453,17 +453,40 @@
             }
         }
 
-        // Format dates as dd/mm/yyyy with proper administrative formatting
-        function formatDate(dateString) {
-            if (!dateString) return '';
-            const date = new Date(dateString);
-            const day = date.getDate().toString().padStart(2, '0'); // Always pad day with zero
-            const month = date.getMonth() + 1;
-            // Only pad months 1 and 2 with zero
-            const formattedMonth = month <= 2 ?
-                month.toString().padStart(2, '0') :
-                month.toString();
-            return `${day}/${formattedMonth}/${date.getFullYear()}`;
+        function parseDateValue(dateValue) {
+            if (dateValue == null || dateValue === '') return null;
+            if (dateValue instanceof Date) return isNaN(dateValue.getTime()) ? null : dateValue;
+
+            const str = String(dateValue).trim();
+
+            // Support dd/MM/yyyy (or dd-MM-yyyy), optionally with a time suffix.
+            const dmy = str.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})(?:\s.*)?$/);
+            if (dmy) {
+                const day = Number(dmy[1]);
+                const month = Number(dmy[2]);
+                const year = Number(dmy[3]);
+                const date = new Date(year, month - 1, day);
+                if (
+                    date.getFullYear() === year &&
+                    date.getMonth() === month - 1 &&
+                    date.getDate() === day
+                ) {
+                    return date;
+                }
+                return null;
+            }
+
+            const date = new Date(str);
+            return isNaN(date.getTime()) ? null : date;
+        }
+
+        // Format date as dd/MM/yyyy
+        function formatDate(dateValue) {
+            const date = parseDateValue(dateValue);
+            if (!date) return '';
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            return `${day}/${month}/${date.getFullYear()}`;
         }
 
         // Update page 1 content with proper administrative date formatting and tinh data
@@ -488,15 +511,9 @@
             const today = new Date();
             const day = today.getDate().toString().padStart(2, '0');
             const currentMonth = today.getMonth() + 1;
-            // Only pad current month if it's 1 or 2
-            const formattedCurrentMonth = currentMonth <= 2 ?
-                currentMonth.toString().padStart(2, '0') :
-                currentMonth.toString();
+            const formattedCurrentMonth = currentMonth.toString().padStart(2, '0');
 
-            // Only pad next month if it's 1 or 2
-            const formattedNextMonth = month <= 2 ?
-                month.toString().padStart(2, '0') :
-                month.toString();
+            const formattedNextMonth = month.toString().padStart(2, '0');
 
             // Update date
             document.getElementById('ngay-thang').innerHTML =
@@ -642,14 +659,10 @@
                 // Xử lý ngày tháng theo quy tắc hành chính
                 const ngayKy = today.getDate().toString().padStart(2, '0');  // Luôn thêm số 0 cho ngày 1-9
                 const thangKy = today.getMonth() + 1;
-                const formattedThangKy = thangKy <= 2 ?
-                    thangKy.toString().padStart(2, '0') :
-                    thangKy.toString();
+                const formattedThangKy = thangKy.toString().padStart(2, '0');
 
                 // Xử lý tháng hết hạn theo quy tắc
-                const thang_het_han = month <= 2 ?
-                    month.toString().padStart(2, '0') :
-                    month.toString();
+                const thang_het_han = month.toString().padStart(2, '0');
 
                 // Set data for template với định dạng ngày tháng mới và tên tỉnh
                 const data = {

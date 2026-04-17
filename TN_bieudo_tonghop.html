@@ -1285,11 +1285,37 @@
             }
         }
 
+        function parseDateValue(dateValue) {
+            if (dateValue == null || dateValue === '') return null;
+            if (dateValue instanceof Date) return isNaN(dateValue.getTime()) ? null : dateValue;
+
+            const str = String(dateValue).trim();
+
+            // Support dd/MM/yyyy (or dd-MM-yyyy), optionally with a time suffix.
+            const dmy = str.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})(?:\s.*)?$/);
+            if (dmy) {
+                const day = Number(dmy[1]);
+                const month = Number(dmy[2]);
+                const year = Number(dmy[3]);
+                const date = new Date(year, month - 1, day);
+                if (
+                    date.getFullYear() === year &&
+                    date.getMonth() === month - 1 &&
+                    date.getDate() === day
+                ) {
+                    return date;
+                }
+                return null;
+            }
+
+            const date = new Date(str);
+            return isNaN(date.getTime()) ? null : date;
+        }
+
         // Format date function
         function formatDate(dateString) {
-            if (!dateString) return '';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('vi-VN');
+            const date = parseDateValue(dateString);
+            return date ? date.toLocaleDateString('vi-VN') : '';
         }
 
         // Calculate active notifications for a route

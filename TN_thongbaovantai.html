@@ -1105,17 +1105,40 @@
             }
         }
 
-        // Format dates as dd/mm/yyyy with administrative rules
-        function formatDate(dateString) {
-            if (!dateString) return '';
-            const date = new Date(dateString);
-            const day = date.getDate().toString().padStart(2, '0'); // Always pad day
-            const month = date.getMonth() + 1;
-            // Only pad months 1 and 2 with zero
-            const formattedMonth = month <= 2 ?
-                month.toString().padStart(2, '0') :
-                month.toString();
-            return `${day}/${formattedMonth}/${date.getFullYear()}`;
+        function parseDateValue(dateValue) {
+            if (dateValue == null || dateValue === '') return null;
+            if (dateValue instanceof Date) return isNaN(dateValue.getTime()) ? null : dateValue;
+
+            const str = String(dateValue).trim();
+
+            // Support dd/MM/yyyy (or dd-MM-yyyy), optionally with a time suffix.
+            const dmy = str.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})(?:\s.*)?$/);
+            if (dmy) {
+                const day = Number(dmy[1]);
+                const month = Number(dmy[2]);
+                const year = Number(dmy[3]);
+                const date = new Date(year, month - 1, day);
+                if (
+                    date.getFullYear() === year &&
+                    date.getMonth() === month - 1 &&
+                    date.getDate() === day
+                ) {
+                    return date;
+                }
+                return null;
+            }
+
+            const date = new Date(str);
+            return isNaN(date.getTime()) ? null : date;
+        }
+
+        // Format date as dd/MM/yyyy
+        function formatDate(dateValue) {
+            const date = parseDateValue(dateValue);
+            if (!date) return '';
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            return `${day}/${month}/${date.getFullYear()}`;
         }
 
         // Function to update page 1 content
@@ -1126,15 +1149,9 @@
             const today = new Date();
             const day = today.getDate().toString().padStart(2, '0'); // Always pad day
             const currentMonth = today.getMonth() + 1;
-            // Only pad months 1 and 2 with zero
-            const formattedCurrentMonth = currentMonth <= 2 ?
-                currentMonth.toString().padStart(2, '0') :
-                currentMonth.toString();
+            const formattedCurrentMonth = currentMonth.toString().padStart(2, '0');
 
-            // Only pad months 1 and 2 with zero for selected month
-            const formattedMonth = month <= 2 ?
-                month.toString().padStart(2, '0') :
-                month.toString();
+            const formattedMonth = month.toString().padStart(2, '0');
 
             // Update date with tinh name
             document.getElementById('ngay-thang').innerHTML =

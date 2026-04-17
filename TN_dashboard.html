@@ -5688,7 +5688,18 @@
             try {
                 // Nếu input là string, parse nó thành Date
                 if (typeof date === 'string') {
-                    date = new Date(date);
+                    const str = date.trim();
+
+                    // Support dd/MM/yyyy (or dd-MM-yyyy)
+                    const dmy = str.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})(?:\s.*)?$/);
+                    if (dmy) {
+                        const day = Number(dmy[1]);
+                        const month = Number(dmy[2]);
+                        const year = Number(dmy[3]);
+                        date = new Date(year, month - 1, day);
+                    } else {
+                        date = new Date(str);
+                    }
                 }
 
                 if (isNaN(date.getTime())) return '';
