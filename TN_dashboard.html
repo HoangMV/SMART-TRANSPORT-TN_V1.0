@@ -5681,36 +5681,19 @@
             return `${year}-${month}-${day}`;
         }
 
-        // Cập nhật hàm formatDateForDisplay để hiển thị đúng định dạng dd/mm/yyyy
+        // Format sang DD/MM/YYYY chuẩn VN (tháng 1,2 có số 0; tháng 3-12 không có)
         function formatDateForDisplay(date) {
             if (!date) return '';
-
             try {
-                // Nếu input là string, parse nó thành Date
                 if (typeof date === 'string') {
-                    const str = date.trim();
-
-                    // Support dd/MM/yyyy (or dd-MM-yyyy)
-                    const dmy = str.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})(?:\s.*)?$/);
-                    if (dmy) {
-                        const day = Number(dmy[1]);
-                        const month = Number(dmy[2]);
-                        const year = Number(dmy[3]);
-                        date = new Date(year, month - 1, day);
-                    } else {
-                        date = new Date(str);
-                    }
+                    date = parseAppSheetDate(date.trim());
                 }
-
-                if (isNaN(date.getTime())) return '';
-
+                if (!date || isNaN(date.getTime())) return '';
                 const day = String(date.getDate()).padStart(2, '0');
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const year = date.getFullYear();
-
-                return `${day}/${month}/${year}`;
+                const m = date.getMonth() + 1;
+                const month = (m <= 2) ? String(m).padStart(2, '0') : String(m);
+                return `${day}/${month}/${date.getFullYear()}`;
             } catch (error) {
-                console.error('Error formatting date for display:', date, error);
                 return '';
             }
         }

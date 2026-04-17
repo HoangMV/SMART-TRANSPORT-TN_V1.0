@@ -636,8 +636,10 @@
                 // Submission date section
                 let ngayNop = '';
                 if (hoSo.NgayNop) {
-                    const date = new Date(hoSo.NgayNop);
-                    ngayNop = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
+                    const p = String(hoSo.NgayNop).trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+                    const date = p ? new Date(Number(p[3]), Number(p[1])-1, Number(p[2])) : new Date(hoSo.NgayNop);
+                    const m = date.getMonth() + 1;
+                    ngayNop = `${date.getDate().toString().padStart(2, '0')}/${m <= 2 ? String(m).padStart(2,'0') : String(m)}/${date.getFullYear()}`;
                 }
                 const submissionDateDiv = document.createElement('div');
                 submissionDateDiv.innerHTML = `<p class="indent-text"><strong>Ngày nộp hồ sơ:</strong> ${ngayNop}</p>`;
@@ -738,14 +740,18 @@
                     // Format dates
                     let ngayHetHanPH = '';
                     if (vehicle.NgayHetHanPH) {
-                        const date = new Date(vehicle.NgayHetHanPH);
-                        ngayHetHanPH = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
+                        const p = String(vehicle.NgayHetHanPH).trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+                        const date = p ? new Date(Number(p[3]), Number(p[1])-1, Number(p[2])) : new Date(vehicle.NgayHetHanPH);
+                        const m = date.getMonth() + 1;
+                        ngayHetHanPH = `${date.getDate().toString().padStart(2, '0')}/${m <= 2 ? String(m).padStart(2,'0') : String(m)}/${date.getFullYear()}`;
                     }
 
                     let ngayHetHanSoLV = '';
                     if (vehicle.NgayHetHanSoLV) {
-                        const date = new Date(vehicle.NgayHetHanSoLV);
-                        ngayHetHanSoLV = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
+                        const p = String(vehicle.NgayHetHanSoLV).trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+                        const date = p ? new Date(Number(p[3]), Number(p[1])-1, Number(p[2])) : new Date(vehicle.NgayHetHanSoLV);
+                        const m = date.getMonth() + 1;
+                        ngayHetHanSoLV = `${date.getDate().toString().padStart(2, '0')}/${m <= 2 ? String(m).padStart(2,'0') : String(m)}/${date.getFullYear()}`;
                     }
 
                     // Add cells for passed vehicles
@@ -892,9 +898,11 @@
 
             // Format date (DD/MM/YYYY)
             if (data.NgayThamDinh) {
-                const date = new Date(data.NgayThamDinh);
+                const p = String(data.NgayThamDinh).trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+                const date = p ? new Date(Number(p[3]), Number(p[1])-1, Number(p[2])) : new Date(data.NgayThamDinh);
                 const day = date.getDate().toString().padStart(2, '0');
-                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const m = date.getMonth() + 1;
+                const month = m <= 2 ? String(m).padStart(2, '0') : String(m);
                 const year = date.getFullYear();
                 document.getElementById('ngay-tham-dinh').textContent =
                     `${tenTinh}, ngày ${day} tháng ${month} năm ${year}`;

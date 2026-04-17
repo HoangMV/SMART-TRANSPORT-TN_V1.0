@@ -567,16 +567,13 @@
             // Format date (DD/MM/YYYY) with administrative rules
             // Format date (DD/MM/YYYY) with administrative rules
             if (data.NgayKy) {
-                const date = new Date(data.NgayKy);
-                const day = date.getDate().toString().padStart(2, '0'); // Always pad day
+                const p = String(data.NgayKy).trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+                const date = p ? new Date(Number(p[3]), Number(p[1])-1, Number(p[2])) : new Date(data.NgayKy);
+                const day = date.getDate().toString().padStart(2, '0');
                 const month = date.getMonth() + 1;
-                // Only pad months 1 and 2 with zero
-                const formattedMonth = month <= 2 ?
-                    month.toString().padStart(2, '0') :
-                    month.toString();
+                const formattedMonth = month <= 2 ? month.toString().padStart(2, '0') : month.toString();
                 const year = date.getFullYear();
 
-                // Cập nhật ngày tháng
                 document.getElementById('ngay-thang').innerHTML =
                     `<span id="tinh-footer">${tenTinh}</span>, ngày ${day} tháng ${formattedMonth} năm ${year}`;
             } else {
@@ -664,13 +661,11 @@
                 let namKy = '';
 
                 if (quyetDinh.NgayKy) {
-                    const date = new Date(quyetDinh.NgayKy);
-                    ngayKy = date.getDate().toString().padStart(2, '0'); // Always pad day
+                    const p = String(quyetDinh.NgayKy).trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+                    const date = p ? new Date(Number(p[3]), Number(p[1])-1, Number(p[2])) : new Date(quyetDinh.NgayKy);
+                    ngayKy = date.getDate().toString().padStart(2, '0');
                     const month = date.getMonth() + 1;
-                    // Only pad months 1 and 2 with zero
-                    thangKy = month <= 2 ?
-                        month.toString().padStart(2, '0') :
-                        month.toString();
+                    thangKy = month <= 2 ? month.toString().padStart(2, '0') : month.toString();
                     namKy = date.getFullYear();
                 }
 
