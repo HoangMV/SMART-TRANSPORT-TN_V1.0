@@ -1285,37 +1285,29 @@
             }
         }
 
+        // Parse MM/DD/YYYY — AppSheet Date field gốc
         function parseDateValue(dateValue) {
             if (dateValue == null || dateValue === '') return null;
             if (dateValue instanceof Date) return isNaN(dateValue.getTime()) ? null : dateValue;
-
             const str = String(dateValue).trim();
-
-            // Support dd/MM/yyyy (or dd-MM-yyyy), optionally with a time suffix.
-            const dmy = str.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})(?:\s.*)?$/);
-            if (dmy) {
-                const day = Number(dmy[1]);
-                const month = Number(dmy[2]);
-                const year = Number(dmy[3]);
-                const date = new Date(year, month - 1, day);
-                if (
-                    date.getFullYear() === year &&
-                    date.getMonth() === month - 1 &&
-                    date.getDate() === day
-                ) {
-                    return date;
-                }
-                return null;
+            const p = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s.*)?$/);
+            if (p) {
+                const month = Number(p[1]), day = Number(p[2]), year = Number(p[3]);
+                const d = new Date(year, month - 1, day);
+                return (d.getFullYear() === year && d.getMonth() === month - 1 && d.getDate() === day) ? d : null;
             }
-
             const date = new Date(str);
             return isNaN(date.getTime()) ? null : date;
         }
 
-        // Format date function
+        // Format sang DD/MM/YYYY chuẩn VN (tháng 1,2 có số 0; tháng 3-12 không có)
         function formatDate(dateString) {
             const date = parseDateValue(dateString);
-            return date ? date.toLocaleDateString('vi-VN') : '';
+            if (!date) return '';
+            const day = String(date.getDate()).padStart(2, '0');
+            const m = date.getMonth() + 1;
+            const month = (m <= 2) ? String(m).padStart(2, '0') : String(m);
+            return `${day}/${month}/${date.getFullYear()}`;
         }
 
         // Calculate active notifications for a route
@@ -3826,14 +3818,14 @@
                 let hanPH = '--';
                 if (x.NgayHetHan) {
                     try {
-                        const d = new Date(x.NgayHetHan);
-                        if (!isNaN(d.getTime())) {
-                            hanPH = d.toLocaleDateString('vi-VN');
+                        const d = parseDateValue(x.NgayHetHan);
+                        if (d && !isNaN(d.getTime())) {
+                            const formatted = formatDate(x.NgayHetHan);
                             const now = new Date();
                             const diff = (d - now) / (1000 * 60 * 60 * 24);
-                            if (diff < 0) hanPH = `<span class="text-red-500 font-semibold">${hanPH} (Hết hạn)</span>`;
-                            else if (diff <= 30) hanPH = `<span class="text-orange-500 font-semibold">${hanPH}</span>`;
-                            else hanPH = `<span class="text-green-600">${hanPH}</span>`;
+                            if (diff < 0) hanPH = `<span class="text-red-500 font-semibold">${formatted} (Hết hạn)</span>`;
+                            else if (diff <= 30) hanPH = `<span class="text-orange-500 font-semibold">${formatted}</span>`;
+                            else hanPH = `<span class="text-green-600">${formatted}</span>`;
                         }
                     } catch (e) { hanPH = x.NgayHetHan; }
                 }
@@ -4313,8 +4305,7 @@
                 xeSorted.forEach((x, idx) => {
                     let hanPH = '';
                     if (x.NgayHetHan) {
-                        try { const d = new Date(x.NgayHetHan); if (!isNaN(d.getTime())) hanPH = d.toLocaleDateString('vi-VN'); }
-                        catch (e) { hanPH = x.NgayHetHan; }
+                        hanPH = formatDate(x.NgayHetHan) || x.NgayHetHan;
                     }
                     const tuyen = _idxTuyenByMa[x.maTuyen || ''];
                     const tenTuyen = tuyen ? `${tuyen.TenTuyen || x.maTuyen} - ${x.maTuyen}` : (x.maTuyen || '');

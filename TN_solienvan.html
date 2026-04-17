@@ -511,40 +511,42 @@
             return await response.json();
         }
 
-        function parseDateValue(dateValue) {
-            if (dateValue == null || dateValue === '') return null;
-            if (dateValue instanceof Date) return isNaN(dateValue.getTime()) ? null : dateValue;
-
-            const str = String(dateValue).trim();
-
-            // Support dd/MM/yyyy (or dd-MM-yyyy), optionally with a time suffix.
-            const dmy = str.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})(?:\s.*)?$/);
-            if (dmy) {
-                const day = Number(dmy[1]);
-                const month = Number(dmy[2]);
-                const year = Number(dmy[3]);
-                const date = new Date(year, month - 1, day);
-                if (
-                    date.getFullYear() === year &&
-                    date.getMonth() === month - 1 &&
-                    date.getDate() === day
-                ) {
-                    return date;
-                }
-                return null;
-            }
-
-            const date = new Date(str);
-            return isNaN(date.getTime()) ? null : date;
+        // Parse MM/DD/YYYY — AppSheet Date field gốc (vd: 04/15/2026)
+        function parseMDY(str) {
+            const p = String(str).trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s.*)?$/);
+            if (!p) return null;
+            const month = Number(p[1]), day = Number(p[2]), year = Number(p[3]);
+            const d = new Date(year, month - 1, day);
+            return (d.getFullYear() === year && d.getMonth() === month - 1 && d.getDate() === day) ? d : null;
         }
 
-        // Format date as dd/MM/yyyy
-        function formatDate(dateValue) {
-            const date = parseDateValue(dateValue);
+        // Parse DD/MM/YYYY — AppSheet virtual field đã định dạng (vd: 15/4/2026)
+        function parseDMY(str) {
+            const p = String(str).trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s.*)?$/);
+            if (!p) return null;
+            const day = Number(p[1]), month = Number(p[2]), year = Number(p[3]);
+            const d = new Date(year, month - 1, day);
+            return (d.getFullYear() === year && d.getMonth() === month - 1 && d.getDate() === day) ? d : null;
+        }
+
+        function applyDateFormat(date) {
             if (!date) return '';
             const day = String(date.getDate()).padStart(2, '0');
-            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const m = date.getMonth() + 1;
+            const month = (m <= 2) ? String(m).padStart(2, '0') : String(m);
             return `${day}/${month}/${date.getFullYear()}`;
+        }
+
+        // formatDate: dùng cho MM/DD/YYYY (AppSheet Date gốc)
+        function formatDate(dateValue) {
+            if (!dateValue) return '';
+            return applyDateFormat(parseMDY(dateValue));
+        }
+
+        // formatDateDMY: dùng cho DD/MM/YYYY (AppSheet virtual field)
+        function formatDateDMY(dateValue) {
+            if (!dateValue) return '';
+            return applyDateFormat(parseDMY(dateValue));
         }
 
         // Main function to fetch all data simultaneously
@@ -626,7 +628,7 @@
 
             // Populate ngày cấp
             if (soLienVanData.NgayCap_SoGPLienVanQT) {
-                document.getElementById('ngay-cap').textContent = soLienVanData.NgayCap_SoGPLienVanQT;
+                document.getElementById('ngay-cap').textContent = formatDate(soLienVanData.NgayCap_SoGPLienVanQT);
             }
 
             // Populate vehicle data
@@ -669,13 +671,13 @@
             }
 
             // Populate SoLienVan specific data
-            if (soLienVanData.NgayTu_DinhDang) {
-                document.getElementById('ngay-tu').textContent = soLienVanData.NgayTu_DinhDang;
-                document.getElementById('ngay-cap-gp').textContent = soLienVanData.NgayTu_DinhDang;
+            if (soLienVanData.NgayCap) {
+                document.getElementById('ngay-tu').textContent = formatDate(soLienVanData.NgayCap);
+                document.getElementById('ngay-cap-gp').textContent = formatDate(soLienVanData.NgayCap);
             }
 
-            if (soLienVanData.NgayDen_DinhDang) {
-                document.getElementById('ngay-den').textContent = soLienVanData.NgayDen_DinhDang;
+            if (soLienVanData.NgayHetHan) {
+                document.getElementById('ngay-den').textContent = formatDate(soLienVanData.NgayHetHan);
             }
 
             if (soLienVanData.CuaKhau) {
@@ -743,14 +745,13 @@
                     ngay_cap_gp: soLienVan.NgayCap_SoGPLienVanQT ? formatDate(soLienVan.NgayCap_SoGPLienVanQT) : '',
 
                     // Trang 4 - Ghi chú và thông tin hiệu lực
-                    ngay_tu: soLienVan.NgayTu_DinhDang || '',
-                    ngay_den: soLienVan.NgayDen_DinhDang || '',
+                    ngay_tu: soLienVan.NgayCap ? formatDate(soLienVan.NgayCap) : '',
+                    ngay_den: soLienVan.NgayHetHan ? formatDate(soLienVan.NgayHetHan) : '',
                     cua_khau: soLienVan.CuaKhau || '',
                     vung_hoat_dong: soLienVan.VungHoatDong || '',
                     noi_den: soLienVan.NoiDen || '',
 
-                    // Ngày cấp giấy phép (lấy từ NgayTu_DinhDang)
-                    ngay_cap_issued: soLienVan.NgayTu_DinhDang || ''
+                    ngay_cap_issued: soLienVan.NgayCap ? formatDate(soLienVan.NgayCap) : ''
                 };
 
                 // Render template với dữ liệu
