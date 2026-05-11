@@ -445,26 +445,58 @@
 
         // Function to get parameters from URL
         function getParametersFromURL() {
-            const urlParams = new URLSearchParams(window.location.search);
             const params = {};
+            const knownKeys = [
+                'tendoanhnghiep',
+                'ngaycap',
+                'nguoidaidien',
+                'bophanat_truongbp',
+                'bophanat_thanhvien'
+            ];
 
-            for (const [key, value] of urlParams) {
-                params[key.toLowerCase()] = decodeURIComponent(value);
+            // Decode toàn bộ query string trước
+            const fullQuery = decodeURIComponent(window.location.search.slice(1));
+
+            for (let i = 0; i < knownKeys.length; i++) {
+                const key = knownKeys[i];
+                const keyIndex = fullQuery.toLowerCase().indexOf(key + '=');
+                if (keyIndex === -1) continue;
+
+                const valueStart = keyIndex + key.length + 1;
+
+                // Tìm điểm kết thúc = vị trí &knownKey= gần nhất phía sau
+                let valueEnd = fullQuery.length;
+                for (let j = 0; j < knownKeys.length; j++) {
+                    if (j === i) continue;
+                    const nextKeyPattern = '&' + knownKeys[j] + '=';
+                    const nextIndex = fullQuery.toLowerCase().indexOf(nextKeyPattern, valueStart);
+                    if (nextIndex !== -1 && nextIndex < valueEnd) {
+                        valueEnd = nextIndex;
+                    }
+                }
+
+                params[key] = fullQuery.substring(valueStart, valueEnd);
             }
 
             return params;
         }
 
         // Parse date từ định dạng dd/mm/yyyy
-        // Parse MM/DD/YYYY — AppSheet Date field gốc
         function parseDate(dateString) {
             if (!dateString) return new Date();
-            const p = String(dateString).trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s.*)?$/);
-            if (p) {
-                const month = Number(p[1]), day = Number(p[2]), year = Number(p[3]);
-                const d = new Date(year, month - 1, day);
-                return (d.getFullYear() === year && d.getMonth() === month - 1 && d.getDate() === day) ? d : new Date();
+
+            // Nếu là định dạng dd/mm/yyyy
+            if (dateString.includes('/')) {
+                const parts = dateString.split('/');
+                if (parts.length === 3) {
+                    const day = parseInt(parts[0]);
+                    const month = parseInt(parts[1]) - 1; // JavaScript month bắt đầu từ 0
+                    const year = parseInt(parts[2]);
+                    return new Date(year, month, day);
+                }
             }
+
+            // Fallback cho các định dạng khác
             return new Date(dateString);
         }
 
@@ -642,7 +674,7 @@
 
                 // URL template
                 // const templateUrl = 'templates/doanhnghiep_template.docx';
-                const templateUrl = 'https://hoangmv.github.io/templates_TN/doanhnghiep_template.docx';
+                const templateUrl = 'https://hoangquy1986.github.io/SMART-TRANSPORT-TN_V1.0/templates_TN_V1.0/doanhnghiep_template.docx';
 
                 let response;
                 try {

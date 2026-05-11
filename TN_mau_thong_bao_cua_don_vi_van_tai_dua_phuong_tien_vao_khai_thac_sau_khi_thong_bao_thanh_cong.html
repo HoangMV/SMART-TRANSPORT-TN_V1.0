@@ -84,7 +84,22 @@
             font-size: 13px;
         }
 
+        .input-group select {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-family: "Times New Roman", serif;
+            font-size: 13px;
+            background: white;
+        }
+
         .input-group input:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .input-group select:focus {
             outline: none;
             border-color: #4CAF50;
         }
@@ -273,11 +288,17 @@
 
         .footer-right .title {
             font-weight: bold;
-            margin-bottom: 80px;
+            margin-bottom: 5px;
+        }
+
+        .footer-right .sub-title {
+            font-weight: bold;
+            margin-bottom: 5px;
         }
 
         .footer-right .name {
             font-weight: bold;
+            margin-top: 60px;
         }
 
         @media print {
@@ -327,6 +348,13 @@
                 <label for="ngay-ktct">Ngày khai thác chính thức:</label>
                 <input type="date" id="ngay-ktct">
             </div>
+
+            <div class="input-group">
+                <label for="nguoi-ky-select">Người ký:</label>
+                <select id="nguoi-ky-select">
+                    <option value="">Chọn người ký</option>
+                </select>
+            </div>
         </div>
 
         <button class="button print-button" onclick="window.print()">
@@ -352,7 +380,8 @@
             <div class="motto">Độc lập - Tự do - Hạnh phúc</div>
             <div class="underline-motto"></div>
             <div class="location-date">
-                <span id="RefTinhdi">...</span>, ngày <span id="ngay">...</span> tháng <span id="thang">...</span> năm <span id="nam">...</span>
+                <span id="RefTinhdi">...</span>, ngày <span id="ngay">...</span> tháng <span id="thang">...</span> năm
+                <span id="nam">...</span>
             </div>
         </div>
     </div>
@@ -367,19 +396,24 @@
             Căn cứ Nghị định số 158/2024/NĐ-CP ngày 18/12/2024 của Chính phủ Quy định về hoạt động vận tải đường bộ;
         </p>
         <p>
-            Căn cứ Thông báo đăng ký khai thác tuyến thành công số <span id="SoDKKTT">...</span> ngày <span id="NgayDKKTT">...</span> của Sở Xây dựng Bắc Ninh;
+            Căn cứ Thông báo đăng ký khai thác tuyến thành công số <span id="SoDKKTT">...</span> ngày <span
+                id="NgayDKKTT">...</span> của Sở Xây dựng Bắc Ninh;
         </p>
         <p>
             Căn cứ Phù hiệu xe tuyến cố định do Sở Xây dựng tỉnh Bắc Ninh cấp cho phương tiện của đơn vị.
         </p>
         <p>
-            <span id="DonViKDVT">...</span> xin trân trọng thông báo việc đưa phương tiện vào khai thác trên tuyến vận tải sau:
+            <span id="DonViKDVT">...</span> xin trân trọng thông báo việc đưa phương tiện vào khai thác trên tuyến vận
+            tải sau:
         </p>
 
         <p class="no-indent"><strong>1. Thông tin tuyến khai thác:</strong></p>
-        <p class="no-indent">- Tên tuyến: <span id="RefTinhdi_2">...</span> đi <span id="RefTinhden">...</span> và ngược lại;</p>
-        <p class="no-indent">- Bến đi: Bến xe <span id="RefBendi">...</span> (thuộc tỉnh <span id="RefTinhdi_3">...</span>);</p>
-        <p class="no-indent">- Bến đến: Bến xe <span id="RefBenden">...</span> (thuộc tỉnh <span id="RefTinhden_2">...</span>);</p>
+        <p class="no-indent">- Tên tuyến: <span id="RefTinhdi_2">...</span> đi <span id="RefTinhden">...</span> và ngược
+            lại;</p>
+        <p class="no-indent">- Bến đi: Bến xe <span id="RefBendi">...</span> (thuộc tỉnh <span
+                id="RefTinhdi_3">...</span>);</p>
+        <p class="no-indent">- Bến đến: Bến xe <span id="RefBenden">...</span> (thuộc tỉnh <span
+                id="RefTinhden_2">...</span>);</p>
         <p class="no-indent">- Hành trình chạy xe: <span id="RefHanhtrinh">...</span>;</p>
         <p class="no-indent">- Mã số tuyến: <span id="RefMasotuyen">...</span>;</p>
         <p class="no-indent">- Cự ly vận chuyển: <span id="RefCuly">...</span> km;</p>
@@ -408,12 +442,15 @@
             </tbody>
         </table>
 
-        <p class="no-indent"><strong>3. Thời gian đưa xe vào khai thác chính thức:</strong> từ ngày <span id="NgayKTCT">...</span>.</p>
+        <p class="no-indent"><strong>3. Thời gian đưa xe vào khai thác chính thức:</strong> từ ngày <span
+                id="NgayKTCT">...</span>.</p>
 
         <p class="no-indent"><strong>4. <span id="DonViKDVT_2">...</span> cam kết:</strong></p>
         <p class="no-indent">- Tổ chức khai thác tuyến đúng phương án đã được Sở Xây dựng chấp thuận;</p>
-        <p class="no-indent">- Chấp hành đầy đủ các quy định của pháp luật về kinh doanh và điều kiện kinh doanh vận tải bằng xe ô tô;</p>
-        <p class="no-indent">- Chịu trách nhiệm hoàn toàn trước pháp luật nếu để xảy ra vi phạm trong quá trình khai thác.</p>
+        <p class="no-indent">- Chấp hành đầy đủ các quy định của pháp luật về kinh doanh và điều kiện kinh doanh vận tải
+            bằng xe ô tô;</p>
+        <p class="no-indent">- Chịu trách nhiệm hoàn toàn trước pháp luật nếu để xảy ra vi phạm trong quá trình khai
+            thác.</p>
 
         <p>
             <span id="DonViKDVT_3">...</span> trân trọng thông báo./.
@@ -428,8 +465,9 @@
             <p>- Lưu: VT, VTATGT.</p>
         </div>
         <div class="footer-right">
-            <div class="title">GIÁM ĐỐC</div>
-            <div class="name">Nguyễn Quốc Ân</div>
+            <div class="title" id="tham-quyen-ky">GIÁM ĐỐC</div>
+            <div class="sub-title" id="chuc-vu-ky"></div>
+            <div class="name" id="nguoi-ky"></div>
         </div>
     </div>
 
@@ -439,6 +477,10 @@
         const region = 'www';
 
         let globalDocumentData = null;
+        let globalTinhData = [];
+        let globalNguoiPhuTrachList = [];
+        let globalSelectedNguoiKyId = '';
+        let globalSelectedNguoiPhuTrachInfo = null;
         let vehicleData = [];
 
         function getIDFromURL() {
@@ -520,6 +562,128 @@
                 month: (month === 1 || month === 2) ? month.toString().padStart(2, '0') : month.toString(),
                 year: today.getFullYear()
             };
+        }
+
+        function parseDateValue(value) {
+            if (!value) return null;
+            const parsedDate = new Date(value);
+            return Number.isNaN(parsedDate.getTime()) ? null : parsedDate;
+        }
+
+        function filterTinhDataByDate(tinhData, referenceDateValue) {
+            const referenceDate = parseDateValue(referenceDateValue) || new Date();
+            return (tinhData || []).filter(item => {
+                const ngayHieuLuc = parseDateValue(item.Ngay_hieu_luc);
+                return !ngayHieuLuc || ngayHieuLuc <= referenceDate;
+            });
+        }
+
+        function normalizeText(value) {
+            return String(value || '').trim().toLowerCase();
+        }
+
+        function getNguoiPhuTrachInfoById(nguoiKyId, nguoiPhuTrachList = globalNguoiPhuTrachList) {
+            const normalizedId = String(nguoiKyId || '').trim();
+            if (!normalizedId || !Array.isArray(nguoiPhuTrachList) || nguoiPhuTrachList.length === 0) {
+                return null;
+            }
+
+            return nguoiPhuTrachList.find(item =>
+                String(item.IDNguoi || '').trim() === normalizedId
+            ) || null;
+        }
+
+        function filterNguoiPhuTrachForSigner(nguoiPhuTrachList) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            return (nguoiPhuTrachList || []).filter(item => {
+                const vaiTro = normalizeText(item.VaiTro);
+                const laLanhDaoSo = vaiTro === normalizeText('Lãnh đạo Sở');
+
+                const ngayKetThuc = parseDateValue(item.NgayKetThuc);
+                if (ngayKetThuc) {
+                    ngayKetThuc.setHours(0, 0, 0, 0);
+                }
+
+                const conHieuLuc = !ngayKetThuc || ngayKetThuc >= today;
+                return laLanhDaoSo && conHieuLuc;
+            });
+        }
+
+        function getDefaultNguoiKyId(tinhData, nguoiPhuTrachList) {
+            if (!Array.isArray(nguoiPhuTrachList) || nguoiPhuTrachList.length === 0) {
+                return '';
+            }
+
+            if (globalSelectedNguoiKyId && getNguoiPhuTrachInfoById(globalSelectedNguoiKyId, nguoiPhuTrachList)) {
+                return globalSelectedNguoiKyId;
+            }
+
+            const sortedTinhData = Array.isArray(tinhData)
+                ? [...tinhData].sort((a, b) => new Date(b.Ngay_hieu_luc) - new Date(a.Ngay_hieu_luc))
+                : [];
+            const defaultNguoiKyValue = String(sortedTinhData[0]?.NguoiKy || '').trim();
+
+            if (defaultNguoiKyValue) {
+                const matchedById = nguoiPhuTrachList.find(item =>
+                    String(item.IDNguoi || '').trim() === defaultNguoiKyValue
+                );
+                if (matchedById) {
+                    return String(matchedById.IDNguoi || '').trim();
+                }
+
+                const matchedByName = nguoiPhuTrachList.find(item =>
+                    normalizeText(item.HoTen) === normalizeText(defaultNguoiKyValue)
+                );
+                if (matchedByName) {
+                    return String(matchedByName.IDNguoi || '').trim();
+                }
+            }
+
+            return String(nguoiPhuTrachList[0]?.IDNguoi || '').trim();
+        }
+
+        function populateNguoiKySelector(nguoiPhuTrachList, selectedId) {
+            const select = document.getElementById('nguoi-ky-select');
+            if (!select) return;
+
+            select.innerHTML = '<option value="">Chọn người ký</option>';
+
+            (nguoiPhuTrachList || []).forEach(item => {
+                const option = document.createElement('option');
+                option.value = String(item.IDNguoi || '').trim();
+
+                const hoTen = String(item.HoTen || '').trim();
+                const chucVu = String(item.ChucVu || '').trim();
+                option.textContent = chucVu ? `${hoTen} - ${chucVu}` : hoTen;
+
+                if (option.value === String(selectedId || '').trim()) {
+                    option.selected = true;
+                }
+
+                select.appendChild(option);
+            });
+        }
+
+        function updateSelectedNguoiKyInfo(selectedId) {
+            globalSelectedNguoiKyId = String(selectedId || '').trim();
+            globalSelectedNguoiPhuTrachInfo = getNguoiPhuTrachInfoById(globalSelectedNguoiKyId, globalNguoiPhuTrachList);
+
+            const nguoiKy = String(globalSelectedNguoiPhuTrachInfo?.HoTen || '').trim();
+            const thamQuyen = String(globalSelectedNguoiPhuTrachInfo?.ThamQuyen || '').trim();
+            const chucVu = String(globalSelectedNguoiPhuTrachInfo?.ChucVu || '').trim();
+
+            document.getElementById('nguoi-ky').textContent = nguoiKy;
+            document.getElementById('tham-quyen-ky').textContent = thamQuyen;
+            document.getElementById('chuc-vu-ky').textContent = chucVu;
+        }
+
+        function initializeNguoiKySelection(tinhData, nguoiPhuTrachList) {
+            globalNguoiPhuTrachList = filterNguoiPhuTrachForSigner(nguoiPhuTrachList);
+            const defaultNguoiKyId = getDefaultNguoiKyId(tinhData, globalNguoiPhuTrachList);
+            populateNguoiKySelector(globalNguoiPhuTrachList, defaultNguoiKyId);
+            updateSelectedNguoiKyInfo(defaultNguoiKyId);
         }
 
         function calculateTongChuyenThang(lichChieuDi) {
@@ -633,7 +797,11 @@
 
                 console.log('Loading data for ID_TB:', idTB);
 
-                const thongbaoList = await fetchAppSheetData('THONGBAO_KHAITHAC');
+                const [thongbaoList, nguoiPhuTrachList, tinhList] = await Promise.all([
+                    fetchAppSheetData('THONGBAO_KHAITHAC'),
+                    fetchAppSheetData('NguoiPhuTrach'),
+                    fetchAppSheetData('ThongTin')
+                ]);
 
                 if (!thongbaoList || thongbaoList.length === 0) {
                     throw new Error('Không có dữ liệu trong bảng THONGBAO_KHAITHAC');
@@ -686,7 +854,9 @@
                     NgayKTCT: ''
                 };
 
+                globalTinhData = filterTinhDataByDate(tinhList, null);
                 populateHTML(globalDocumentData);
+                initializeNguoiKySelection(globalTinhData, nguoiPhuTrachList);
                 hideLoadingMessage();
             } catch (error) {
                 console.error('Error loading data:', error);
@@ -818,6 +988,11 @@
                     return;
                 }
 
+                if (!globalSelectedNguoiPhuTrachInfo) {
+                    alert('Vui lòng chọn người ký.');
+                    return;
+                }
+
                 if (vehicleData.length === 0) {
                     alert('Không có dữ liệu phương tiện để xuất.');
                     return;
@@ -826,7 +1001,8 @@
                 document.getElementById('loading-message').style.display = 'block';
                 document.getElementById('loading-message').textContent = 'Đang xuất file Word...';
 
-                const templateUrl = 'https://hoangmv.github.io/templates_TN/mau_thong_bao_cua_don_vi_van_tai_dua_phuong_tien_vao_khai_thac_sau_khi_thong_bao_thanh_cong.docx';
+                const templateUrl = 'https://hoangquy1986.github.io/SMART-TRANSPORT-TN_V1.0/templates_TN_V1.0/mau_thong_bao_cua_don_vi_van_tai_dua_phuong_tien_vao_khai_thac_sau_khi_thong_bao_thanh_cong.docx';
+                // const templateUrl = '/templates_BG_V1.1/mau_thong_bao_cua_don_vi_van_tai_dua_phuong_tien_vao_khai_thac_sau_khi_thong_bao_thanh_cong.docx';
 
                 const response = await fetch(templateUrl);
                 if (!response.ok) {
@@ -859,6 +1035,9 @@
                     LichChieuDi: globalDocumentData.LichChieuDi,
                     LichChieuVe: globalDocumentData.LichChieuVe,
                     NgayKTCT: formatDateFromInput(ngayKTCT),
+                    nguoi_ky: String(globalSelectedNguoiPhuTrachInfo?.HoTen || '').trim(),
+                    tham_quyen_ky: String(globalSelectedNguoiPhuTrachInfo?.ThamQuyen || '').trim(),
+                    chuc_vu_ky: String(globalSelectedNguoiPhuTrachInfo?.ChucVu || '').trim(),
                     vehicles: vehicleData
                 };
 
@@ -911,6 +1090,9 @@
             document.getElementById('so-dkktt').addEventListener('input', updateDisplayFromInputs);
             document.getElementById('ngay-dkktt').addEventListener('change', updateDisplayFromInputs);
             document.getElementById('ngay-ktct').addEventListener('change', updateDisplayFromInputs);
+            document.getElementById('nguoi-ky-select').addEventListener('change', function () {
+                updateSelectedNguoiKyInfo(this.value);
+            });
 
             setTimeout(() => {
                 initialize();
