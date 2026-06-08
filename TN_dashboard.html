@@ -7760,11 +7760,11 @@
 
         // Initialize application (CẬP NHẬT)
         async function initializeApp() {
-            // Set default dates - 30 ngày gần nhất
+            // Set default dates - 12 tháng gần nhất
             const today = new Date();
-            const thirtyDaysAgo = new Date(today);
-            thirtyDaysAgo.setDate(today.getDate() - 30);
-            document.getElementById('startDate').value = thirtyDaysAgo.toISOString().split('T')[0];
+            const twelveMonthsAgo = new Date(today);
+            twelveMonthsAgo.setFullYear(today.getFullYear() - 1);
+            document.getElementById('startDate').value = twelveMonthsAgo.toISOString().split('T')[0];
             document.getElementById('endDate').value = today.toISOString().split('T')[0];
 
             // Initialize enhanced UI
@@ -7863,6 +7863,7 @@
 
                 // BƯỚC 2: Hiển thị UI ngay với data đã có
                 populateFilterOptions();
+                populateLocationFilters();
                 updateAllUI();
                 setTimeout(() => { initDashboardCharts(); }, 300);
                 showNotification('Đã tải xong dữ liệu chính!', 'success');

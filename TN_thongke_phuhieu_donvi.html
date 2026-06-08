@@ -9,7 +9,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* ===== TABLE WRAPPER ===== */
         .table-wrapper {
             overflow-x: auto;
             overflow-y: auto;
@@ -18,7 +17,6 @@
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
-        /* ===== STICKY HEADER ROW ===== */
         .sticky-header thead tr th {
             position: sticky;
             top: 0;
@@ -27,11 +25,9 @@
             color: white;
         }
 
-        /* ===== FROZEN LEFT COLUMNS ===== */
-        /* Widths: STT=42 | Loại=112 | Tên=210 | ĐChỉ=170 | NĐD=155 | ĐThoại=115 */
         .sc-stt {
             position: sticky;
-            left: 0px;
+            left: 0;
             z-index: 4;
             min-width: 42px;
             max-width: 42px;
@@ -74,7 +70,6 @@
             width: 155px;
         }
 
-        /* Điện thoại — rightmost frozen col, shadow marks boundary */
         .sc-dt {
             position: sticky;
             left: 689px;
@@ -85,7 +80,6 @@
             box-shadow: 3px 0 6px -2px rgba(0, 0, 0, 0.18);
         }
 
-        /* Sticky header bg (higher z-index) */
         thead .sc-stt,
         thead .sc-loai,
         thead .sc-ten,
@@ -94,11 +88,6 @@
         thead .sc-dt {
             background-color: #1e40af !important;
             z-index: 15 !important;
-        }
-
-        /* Row bg for ALL frozen cols */
-        .sc-col {
-            background-color: inherit;
         }
 
         tbody tr:nth-child(odd) .sc-stt,
@@ -128,7 +117,6 @@
             background-color: #eff6ff;
         }
 
-        /* Footer sticky bg */
         .footer-row .sc-stt,
         .footer-row .sc-loai,
         .footer-row .sc-ten,
@@ -138,7 +126,6 @@
             background-color: #eff6ff;
         }
 
-        /* ===== SORT ===== */
         th.sortable {
             cursor: pointer;
             user-select: none;
@@ -148,7 +135,6 @@
             background-color: #1d4ed8 !important;
         }
 
-        /* ===== CARDS ===== */
         .stat-card {
             transition: transform 0.18s ease, box-shadow 0.18s ease;
         }
@@ -158,7 +144,6 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.14);
         }
 
-        /* ===== ANIMATION ===== */
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -175,7 +160,6 @@
             animation: fadeIn 0.35s ease;
         }
 
-        /* ===== BADGE ===== */
         .type-badge {
             display: inline-block;
             padding: 2px 7px;
@@ -184,14 +168,12 @@
             font-weight: 600;
         }
 
-        /* ===== TRUNCATE ===== */
         .cell-truncate {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
 
-        /* ===== FILTER PANEL TOGGLE ===== */
         #filterPanel {
             transform-origin: top;
             transition: opacity 0.2s ease, transform 0.2s ease;
@@ -207,12 +189,19 @@
         #btnToggleFilter.active {
             background-color: rgba(255, 255, 255, 0.35) !important;
         }
+
+        .inline-loader {
+            display: none;
+        }
+
+        .inline-loader.show {
+            display: flex;
+        }
     </style>
 </head>
 
 <body class="bg-gray-50 min-h-screen">
 
-    <!-- Loading Overlay -->
     <div id="loading-overlay" class="fixed inset-0 bg-gray-800 bg-opacity-60 flex items-center justify-center z-50">
         <div class="bg-white rounded-2xl p-8 flex flex-col items-center gap-4 shadow-2xl">
             <div class="animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent"></div>
@@ -221,7 +210,6 @@
         </div>
     </div>
 
-    <!-- Header -->
     <header class="bg-gradient-to-r from-blue-800 to-blue-600 text-white shadow-lg">
         <div class="max-w-screen-2xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
             <div>
@@ -245,12 +233,9 @@
     </header>
 
     <main class="max-w-screen-2xl mx-auto p-4 space-y-5">
-
-        <!-- Bộ lọc -->
         <div id="filterPanel"
             class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 transition-all duration-300">
             <div class="flex flex-wrap gap-4 items-end">
-                <!-- Tìm kiếm -->
                 <div class="flex-1 min-w-[200px]">
                     <label class="block text-xs font-semibold text-gray-600 mb-1">
                         <i class="fas fa-search mr-1 text-blue-500"></i> Tìm kiếm đơn vị
@@ -259,7 +244,6 @@
                         class="w-full border-2 border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition"
                         oninput="debouncedApplyFilters()">
                 </div>
-                <!-- Loại hình -->
                 <div class="min-w-[180px]">
                     <label class="block text-xs font-semibold text-gray-600 mb-1">
                         <i class="fas fa-building mr-1 text-green-500"></i> Loại hình đơn vị
@@ -269,7 +253,6 @@
                         <option value="">-- Tất cả --</option>
                     </select>
                 </div>
-                <!-- Loại phù hiệu -->
                 <div class="min-w-[180px]">
                     <label class="block text-xs font-semibold text-gray-600 mb-1">
                         <i class="fas fa-tag mr-1 text-purple-500"></i> Loại phù hiệu
@@ -279,7 +262,6 @@
                         <option value="">-- Tất cả --</option>
                     </select>
                 </div>
-                <!-- Xã Phường -->
                 <div class="min-w-[140px] max-w-[180px]">
                     <label class="block text-xs font-semibold text-gray-600 mb-1">
                         <i class="fas fa-map-marker-alt mr-1 text-red-500"></i> Xã/Phường
@@ -289,7 +271,6 @@
                         <option value="">-- Tất cả --</option>
                     </select>
                 </div>
-                <!-- Số lượng phù hiệu -->
                 <div class="min-w-[230px]">
                     <label class="block text-xs font-semibold text-gray-600 mb-1">
                         <i class="fas fa-filter mr-1 text-orange-500"></i> Tổng phù hiệu
@@ -309,12 +290,10 @@
                             class="w-20 border-2 border-gray-200 rounded-xl px-2 py-2 text-sm focus:outline-none focus:border-blue-500 transition hidden">
                     </div>
                 </div>
-                <!-- Nút reset -->
                 <button onclick="resetFilters()"
                     class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-sm font-medium transition flex items-center gap-2">
                     <i class="fas fa-undo"></i> Xóa lọc
                 </button>
-                <!-- Nút xuất Excel -->
                 <button onclick="exportToExcel()"
                     class="px-5 py-2 bg-green-600 hover:bg-green-700 text-white rounded-xl text-sm font-semibold transition flex items-center gap-2 shadow-sm">
                     <i class="fas fa-file-excel"></i> Xuất Excel
@@ -322,17 +301,21 @@
             </div>
         </div>
 
-        <!-- Summary Cards — 8 cột -->
-        <div id="summary-cards" class="grid grid-cols-8 gap-3 fade-in"></div>
+        <div id="summary-cards" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-6 gap-3 fade-in">
+        </div>
 
-        <!-- Bảng thống kê -->
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100">
-            <div class="flex items-center justify-between px-5 py-3 border-b border-gray-100">
+            <div class="flex flex-wrap items-center justify-between gap-3 px-5 py-3 border-b border-gray-100">
                 <div>
                     <h2 class="font-semibold text-gray-800 text-base">
                         <i class="fas fa-table mr-2 text-blue-500"></i>
                         Danh sách đơn vị vận tải
                     </h2>
+                    <p id="result-count" class="text-xs text-gray-500 mt-1">Đang chuẩn bị dữ liệu...</p>
+                </div>
+                <div id="inline-loader" class="inline-loader items-center gap-2 text-sm text-blue-600">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <span id="inline-loader-text">Đang cập nhật dữ liệu nền...</span>
                 </div>
             </div>
             <div class="table-wrapper">
@@ -341,38 +324,34 @@
                     <tbody id="tableBody" class="divide-y divide-gray-100"></tbody>
                 </table>
             </div>
+            <div id="pagination"
+                class="flex flex-wrap items-center justify-between gap-3 px-5 py-3 border-t border-gray-100 text-sm text-gray-600">
+            </div>
         </div>
-
     </main>
 
     <script>
-        // ============================================================
-        // CONFIG
-        // ============================================================
-        const APP_ID = '7ee20176-7cb1-4ad4-9d13-e541c8b1b3dc';
-        const ACCESS_KEY = 'V2-EYFgE-X83x3-xFTsK-y3eTp-L9F22-MKoI1-TGU28-sWcWd';
+        const APP_ID = '085eef9b-92f5-4f86-9eb7-b8324e02fc2b';
+        const ACCESS_KEY = 'V2-AGscv-ApGpI-R0L7E-JCxeh-ms3pa-2WqWn-0H4ZG-datL7';
         const REGION = 'www';
 
-        // ============================================================
-        // STATE
-        // ============================================================
-        let allEmblemsData = [];   // Tất cả PHUHIEUXE
-        let allCompanyData = [];   // Tất cả THONGTINDONVIVANTAI
-        let phLoaiTypes = [];   // Danh sách LoaiPH duy nhất
-        let statsData = [];   // Dữ liệu đã xử lý theo đơn vị
-        let filteredStats = [];   // Sau khi lọc
+        let allEmblemsData = [];
+        let allCompanyData = [];
+        let phLoaiTypes = [];
+        let statsData = [];
+        let filteredStats = [];
         let companyLookup = new Map();
         let filteredSummary = { totalDV: 0, totalPH: 0, totalDKT: 0, typeTotals: {} };
         let filterDebounceTimer = null;
         let sortCol = 'total';
         let sortDir = 'desc';
+        let currentPage = 1;
+        const PAGE_SIZE = 100;
         const FILTER_DEBOUNCE_MS = 250;
-        const CACHE_KEY = 'thongke_phuhieu_donvi_v3';
-        const CACHE_TTL_MS = 15 * 60 * 1000;
+        const CACHE_KEY = 'thongke_phuhieu_donvi_v4';
+        const CACHE_TTL_MS = 60 * 60 * 1000;
+        const CHUNK_SIZE = 400;
 
-        // ============================================================
-        // API
-        // ============================================================
         async function apiRequest(tableName, selector) {
             const url = `https://${REGION}.appsheet.com/api/v2/apps/${APP_ID}/tables/${tableName}/Action`;
             const res = await fetch(url, {
@@ -382,6 +361,17 @@
             });
             if (!res.ok) throw new Error(`HTTP ${res.status} - ${tableName}`);
             return res.json();
+        }
+
+        function waitForNextFrame() {
+            return new Promise(resolve => requestAnimationFrame(() => resolve()));
+        }
+
+        function setInlineLoading(show, text = 'Đang cập nhật dữ liệu nền...') {
+            const loader = document.getElementById('inline-loader');
+            const label = document.getElementById('inline-loader-text');
+            label.textContent = text;
+            loader.classList.toggle('show', show);
         }
 
         function getCurrentFilters() {
@@ -436,18 +426,29 @@
             }
         }
 
+        function updateResultCount() {
+            const totalPages = Math.max(1, Math.ceil(filteredStats.length / PAGE_SIZE));
+            const start = filteredStats.length ? ((currentPage - 1) * PAGE_SIZE + 1) : 0;
+            const end = Math.min(currentPage * PAGE_SIZE, filteredStats.length);
+            document.getElementById('result-count').textContent = filteredStats.length
+                ? `Hiển thị ${start}-${end} / ${filteredStats.length} đơn vị`
+                : 'Không có kết quả';
+            renderPagination(totalPages);
+        }
+
         function applyProcessedData(nextStatsData, nextPhLoaiTypes, ts, prefix = 'Cập nhật') {
             const currentFilters = getCurrentFilters();
             statsData = cloneStatsData(nextStatsData);
             phLoaiTypes = Array.isArray(nextPhLoaiTypes) ? [...nextPhLoaiTypes] : [];
             populateFilters();
             restoreFilters(currentFilters);
+            currentPage = 1;
             applyFilters();
-            document.getElementById('last-updated').textContent =
-                `${prefix}: ${new Date(ts).toLocaleString('vi-VN')}`;
+            document.getElementById('last-updated').textContent = `${prefix}: ${new Date(ts).toLocaleString('vi-VN')}`;
         }
 
         async function fetchRemoteData() {
+            setLoadingText('Đang lấy dữ liệu từ AppSheet...');
             const [emblemsRaw, companyRaw] = await Promise.all([
                 apiRequest('PHUHIEUXE', 'Filter(PHUHIEUXE, [TrangThai] = "Hiệu lực")'),
                 apiRequest('THONGTINDONVIVANTAI', 'Filter(THONGTINDONVIVANTAI, true)')
@@ -459,9 +460,8 @@
                 allCompanyData.map(item => [String(item.IDDoanhNghiep || '').trim(), item])
             );
 
-            console.log('Phù hiệu:', allEmblemsData.length, '| Đơn vị:', allCompanyData.length);
-
-            buildStatsData();
+            setLoadingText(`Đang xử lý ${allEmblemsData.length.toLocaleString('vi-VN')} phù hiệu...`);
+            await buildStatsDataAsync();
 
             return {
                 ts: Date.now(),
@@ -472,17 +472,17 @@
 
         async function refreshDataInBackground() {
             try {
+                setInlineLoading(true, 'Đang cập nhật dữ liệu nền...');
                 const fresh = await fetchRemoteData();
                 saveCache(fresh);
                 applyProcessedData(fresh.statsData, fresh.phLoaiTypes, fresh.ts, 'Cập nhật');
             } catch (err) {
                 console.error('Lỗi làm mới nền:', err);
+            } finally {
+                setInlineLoading(false);
             }
         }
 
-        // ============================================================
-        // LOAD DATA
-        // ============================================================
         async function loadData(forceRefresh = false) {
             const cached = !forceRefresh ? loadCache() : null;
             if (cached) {
@@ -493,6 +493,7 @@
             }
 
             showLoading(true);
+            setInlineLoading(false);
             try {
                 setLoadingText(forceRefresh ? 'Đang làm mới dữ liệu...' : 'Đang tải dữ liệu phù hiệu...');
                 const fresh = await fetchRemoteData();
@@ -508,15 +509,11 @@
             }
         }
 
-        // ============================================================
-        // LOGIC: Kiểm tra phù hiệu còn hiệu lực
-        // ============================================================
         function isValidEmblem(e) {
-            // ✅ Chỉ lấy phù hiệu có TrangThai = 'Hiệu lực'
             if ((e.TrangThai || '').trim() !== 'Hiệu lực') return false;
-
             if (e.NgayHetHan) {
-                const today = new Date(); today.setHours(0, 0, 0, 0);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
                 const exp = new Date(e.NgayHetHan);
                 if (exp < today) return false;
             }
@@ -528,39 +525,46 @@
             const tkt = (e.TrangThaiKhaiThac || '').toLowerCase();
             if (tkt === '' || tkt.includes('đang') || tkt.includes('hoat dong') || tkt.includes('hoạt động')) return true;
             if (tkt.includes('ngưng') || tkt.includes('ngung') || tkt.includes('dừng') || tkt.includes('dung')) return false;
-            // Nếu không có trường thông tin, phù hiệu còn hạn = đang khai thác
             return true;
         }
 
-        // ============================================================
-        // BUILD STATS: Gộp phù hiệu theo đơn vị
-        // ============================================================
-        function buildStatsData() {
-            const validEmblems = allEmblemsData.filter(isValidEmblem);
+        async function buildStatsDataAsync() {
+            const validEmblems = [];
+            const typeSet = new Set();
 
-            // Thu thập LoaiPH
-            phLoaiTypes = [...new Set(validEmblems.map(e => (e.LoaiPH || '').trim()).filter(Boolean))].sort();
+            for (let i = 0; i < allEmblemsData.length; i++) {
+                const item = allEmblemsData[i];
+                if (isValidEmblem(item)) {
+                    validEmblems.push(item);
+                    const loai = (item.LoaiPH || '').trim();
+                    if (loai) typeSet.add(loai);
+                }
+                if ((i + 1) % CHUNK_SIZE === 0) {
+                    setLoadingSub(`Đã quét ${Math.min(i + 1, allEmblemsData.length).toLocaleString('vi-VN')} / ${allEmblemsData.length.toLocaleString('vi-VN')} phù hiệu`);
+                    await waitForNextFrame();
+                }
+            }
 
+            phLoaiTypes = [...typeSet].sort();
             const companyMap = new Map();
 
-            validEmblems.forEach(e => {
-                // Key theo Ref_DonViCapPhuHieu, fallback Ten_don_vi
+            for (let i = 0; i < validEmblems.length; i++) {
+                const e = validEmblems[i];
                 const refDonVi = String(e.Ref_DonViCapPhuHieu || '').trim();
-                const key = refDonVi || (e.Ten_don_vi || '').trim() || 'unknown';
+                const key = refDonVi || (e.Ten_don_vi || '').trim() || `unknown_${i}`;
 
                 if (!companyMap.has(key)) {
-                    // Tìm thông tin bổ sung từ THONGTINDONVIVANTAI
                     const comp = refDonVi ? companyLookup.get(refDonVi) : null;
                     const tenDonVi = e.Ten_don_vi || (comp ? (comp.TenDoanhNghiep || '') : '');
                     const maDN = comp ? (comp.MaDN || comp.IDDoanhNghiep || key) : key;
 
                     companyMap.set(key, {
                         companyId: key,
-                        tenDonVi: tenDonVi,
+                        tenDonVi,
                         diaChi: comp ? (comp.DiaChiSauSapNhap || '') : '',
                         loaihinh: e.Loaihinh_donvi || (comp ? (comp.Loaihinh_donvi || comp.LoaihinhDonvi || '') : ''),
                         quanHuyen: comp ? (comp.XaPhuongSauSapNhap || '') : '',
-                        maDN: maDN,
+                        maDN,
                         nguoiDaiDien: comp ? (comp.NguoiDaiDienTheoPhapLuat || comp.NguoiDaiDien || comp.NguoidaidienTheoPhapLuat || '') : '',
                         dienThoai: comp ? (comp.SoDienThoai || comp.DienThoai || '') : '',
                         email: comp ? (comp.Email || comp.EmailDonVi || '') : (e.GuiEmailbao || ''),
@@ -572,41 +576,55 @@
                 }
 
                 const company = companyMap.get(key);
-                company.total++;
-                if (isDangKhaiThac(e)) company.dangKhaiThac++;
+                company.total += 1;
+                if (isDangKhaiThac(e)) company.dangKhaiThac += 1;
 
                 const loai = (e.LoaiPH || '').trim();
                 if (loai) {
                     company.byType[loai] = (company.byType[loai] || 0) + 1;
                 }
-            });
+
+                if ((i + 1) % CHUNK_SIZE === 0) {
+                    setLoadingSub(`Đã tổng hợp ${Math.min(i + 1, validEmblems.length).toLocaleString('vi-VN')} / ${validEmblems.length.toLocaleString('vi-VN')} phù hiệu hợp lệ`);
+                    await waitForNextFrame();
+                }
+            }
 
             statsData = Array.from(companyMap.values());
         }
 
-        // ============================================================
-        // FILTERS
-        // ============================================================
         function populateFilters() {
-            // Loại hình
             const loaihinhSet = [...new Set(statsData.map(s => s.loaihinh).filter(Boolean))].sort();
             const lhSel = document.getElementById('loaihinhFilter');
             lhSel.innerHTML = '<option value="">-- Tất cả --</option>';
-            loaihinhSet.forEach(v => { const o = document.createElement('option'); o.value = v; o.textContent = v; lhSel.appendChild(o); });
+            loaihinhSet.forEach(v => {
+                const o = document.createElement('option');
+                o.value = v;
+                o.textContent = v;
+                lhSel.appendChild(o);
+            });
 
-            // Loại phù hiệu
             const lpSel = document.getElementById('loaiphFilter');
             lpSel.innerHTML = '<option value="">-- Tất cả --</option>';
-            phLoaiTypes.forEach(v => { const o = document.createElement('option'); o.value = v; o.textContent = v; lpSel.appendChild(o); });
+            phLoaiTypes.forEach(v => {
+                const o = document.createElement('option');
+                o.value = v;
+                o.textContent = v;
+                lpSel.appendChild(o);
+            });
 
-            // Quận huyện
             const qhSet = [...new Set(statsData.map(s => s.quanHuyen).filter(Boolean))].sort();
             const qhSel = document.getElementById('quanhuyenFilter');
             qhSel.innerHTML = '<option value="">-- Tất cả --</option>';
-            qhSet.forEach(v => { const o = document.createElement('option'); o.value = v; o.textContent = v; qhSel.appendChild(o); });
+            qhSet.forEach(v => {
+                const o = document.createElement('option');
+                o.value = v;
+                o.textContent = v;
+                qhSel.appendChild(o);
+            });
         }
 
-        function applyFilters() {
+        function applyFilters(resetPage = true) {
             if (filterDebounceTimer) {
                 clearTimeout(filterDebounceTimer);
                 filterDebounceTimer = null;
@@ -620,7 +638,6 @@
             const totalMin = parseFloat(document.getElementById('totalMin').value);
             const totalMax = parseFloat(document.getElementById('totalMax').value);
 
-            // Hiện/ẩn ô "đến" theo toán tử
             const isBetween = totalOp === 'between';
             document.getElementById('totalMax').classList.toggle('hidden', !isBetween);
             document.getElementById('totalBetweenSep').classList.toggle('hidden', !isBetween);
@@ -629,19 +646,21 @@
                 if (loaihinh && s.loaihinh !== loaihinh) return false;
                 if (qh && s.quanHuyen !== qh) return false;
                 if (loaiph && !(s.byType[loaiph] > 0)) return false;
-                if (search) {
-                    if (!s.searchIndex.includes(search)) return false;
-                }
+                if (search && !s.searchIndex.includes(search)) return false;
                 if (totalOp && !isNaN(totalMin)) {
                     if (totalOp === 'gte' && s.total < totalMin) return false;
                     if (totalOp === 'lte' && s.total > totalMin) return false;
-                    if (totalOp === 'between' && !isNaN(totalMax) && (s.total < totalMin || s.total > totalMax)) return false;
+                    if (totalOp === 'between') {
+                        if (isNaN(totalMax)) return false;
+                        if (s.total < totalMin || s.total > totalMax) return false;
+                    }
                 }
                 return true;
             });
 
             sortStats();
             filteredSummary = calculateSummary(filteredStats);
+            if (resetPage) currentPage = 1;
             renderSummaryCards();
             renderTable();
         }
@@ -665,9 +684,6 @@
             applyFilters();
         }
 
-        // ============================================================
-        // SORT
-        // ============================================================
         function sortBy(col) {
             if (sortCol === col) {
                 sortDir = sortDir === 'asc' ? 'desc' : 'asc';
@@ -698,9 +714,6 @@
             });
         }
 
-        // ============================================================
-        // RENDER: Summary Cards
-        // ============================================================
         function calculateSummary(stats) {
             const summary = {
                 totalDV: stats.length,
@@ -726,7 +739,6 @@
 
         function renderSummaryCards() {
             const summary = filteredSummary;
-
             const colors = [
                 'from-blue-600 to-blue-500',
                 'from-green-600 to-green-500',
@@ -738,15 +750,14 @@
             ];
             const icons = ['fas fa-building', 'fas fa-id-card', 'fas fa-truck', 'fas fa-bus', 'fas fa-taxi', 'fas fa-file-contract', 'fas fa-map-signs'];
 
-            // Helper: compact card (1 hàng, nhỏ gọn)
             const card = (grad, icon, label, value) =>
                 `<div class="stat-card bg-gradient-to-br ${grad} text-white rounded-xl px-4 py-3 shadow flex items-center gap-3">
-                <div class="bg-white bg-opacity-20 rounded-lg p-2 flex-shrink-0"><i class="${icon} text-sm"></i></div>
-                <div class="min-w-0">
-                    <p class="text-white text-opacity-80 text-xs font-medium whitespace-nowrap leading-tight">${label}</p>
-                    <p class="text-xl font-bold leading-tight mt-0.5">${value}</p>
-                </div>
-            </div>`;
+                    <div class="bg-white bg-opacity-20 rounded-lg p-2 flex-shrink-0"><i class="${icon} text-sm"></i></div>
+                    <div class="min-w-0">
+                        <p class="text-white text-opacity-80 text-xs font-medium whitespace-nowrap leading-tight">${label}</p>
+                        <p class="text-xl font-bold leading-tight mt-0.5">${value}</p>
+                    </div>
+                </div>`;
 
             let html =
                 card('from-blue-800 to-blue-600', 'fas fa-building', 'Đơn vị vận tải', summary.totalDV.toLocaleString('vi-VN')) +
@@ -761,43 +772,59 @@
             document.getElementById('summary-cards').innerHTML = html;
         }
 
-        // ============================================================
-        // RENDER: Table
-        // ============================================================
+        function renderPagination(totalPages) {
+            const el = document.getElementById('pagination');
+            if (!filteredStats.length) {
+                el.innerHTML = '';
+                return;
+            }
+
+            el.innerHTML = `
+                <div>Trang ${currentPage} / ${totalPages}</div>
+                <div class="flex items-center gap-2">
+                    <button onclick="changePage(-1)" class="px-3 py-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 ${currentPage === 1 ? 'opacity-50 pointer-events-none' : ''}">Trước</button>
+                    <button onclick="changePage(1)" class="px-3 py-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 ${currentPage === totalPages ? 'opacity-50 pointer-events-none' : ''}">Sau</button>
+                </div>
+            `;
+        }
+
+        function changePage(delta) {
+            const totalPages = Math.max(1, Math.ceil(filteredStats.length / PAGE_SIZE));
+            currentPage = Math.min(totalPages, Math.max(1, currentPage + delta));
+            renderTable();
+        }
+
         function renderTable() {
             const thead = document.getElementById('tableHead');
             const tbody = document.getElementById('tableBody');
 
-            // ---- Header ----
             const sortIndicator = (col) => {
                 if (sortCol !== col) return '';
                 return sortDir === 'asc' ? ' ▲' : ' ▼';
             };
 
             let headerRow = `<tr>
-            <th class="sc-stt px-2 py-3 text-center text-xs font-semibold">STT</th>
-            <th class="sc-loai sortable px-2 py-3 text-left text-xs font-semibold" onclick="sortBy('loaihinh')">Loại hình${sortIndicator('loaihinh')}</th>
-            <th class="sc-ten sortable px-3 py-3 text-left text-xs font-semibold" onclick="sortBy('tenDonVi')">Tên đơn vị${sortIndicator('tenDonVi')}</th>
-            <th class="sc-dia px-3 py-3 text-left text-xs font-semibold">Địa chỉ</th>
-            <th class="sc-ndd px-3 py-3 text-left text-xs font-semibold">Người đại diện</th>
-            <th class="sc-dt  px-3 py-3 text-left text-xs font-semibold">Điện thoại</th>
-            <th class="px-3 py-3 text-left text-xs font-semibold" style="min-width:150px">Email</th>
-            <th class="sortable px-3 py-3 text-center text-xs font-semibold whitespace-nowrap bg-indigo-700" onclick="sortBy('dangKhaiThac')">Đang KT${sortIndicator('dangKhaiThac')}</th>
-            <th class="sortable px-3 py-3 text-center text-xs font-semibold whitespace-nowrap bg-green-700" onclick="sortBy('total')">Tổng PH${sortIndicator('total')}</th>`;
+                <th class="sc-stt px-2 py-3 text-center text-xs font-semibold">STT</th>
+                <th class="sc-loai sortable px-2 py-3 text-left text-xs font-semibold" onclick="sortBy('loaihinh')">Loại hình${sortIndicator('loaihinh')}</th>
+                <th class="sc-ten sortable px-3 py-3 text-left text-xs font-semibold" onclick="sortBy('tenDonVi')">Tên đơn vị${sortIndicator('tenDonVi')}</th>
+                <th class="sc-dia px-3 py-3 text-left text-xs font-semibold">Địa chỉ</th>
+                <th class="sc-ndd px-3 py-3 text-left text-xs font-semibold">Người đại diện</th>
+                <th class="sc-dt px-3 py-3 text-left text-xs font-semibold">Điện thoại</th>
+                <th class="px-3 py-3 text-left text-xs font-semibold" style="min-width:150px">Email</th>
+                <th class="sortable px-3 py-3 text-center text-xs font-semibold whitespace-nowrap bg-indigo-700" onclick="sortBy('dangKhaiThac')">Đang KT${sortIndicator('dangKhaiThac')}</th>
+                <th class="sortable px-3 py-3 text-center text-xs font-semibold whitespace-nowrap bg-green-700" onclick="sortBy('total')">Tổng PH${sortIndicator('total')}</th>`;
 
             phLoaiTypes.forEach(t => {
                 headerRow += `<th class="sortable px-3 py-3 text-center text-xs font-semibold whitespace-nowrap" onclick="sortBy('${t}')">${t}${sortIndicator(t)}</th>`;
             });
-            headerRow += `</tr>`;
+            headerRow += '</tr>';
             thead.innerHTML = headerRow;
 
-            // ---- Body ----
             if (filteredStats.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="${8 + phLoaiTypes.length}" class="py-16 text-center text-gray-400">
-                <i class="fas fa-inbox text-4xl mb-3 block"></i>Không có dữ liệu phù hợp
-            </td></tr>`;
-                const resultCountEl = document.getElementById('result-count');
-                if (resultCountEl) resultCountEl.textContent = 'Không có kết quả';
+                tbody.innerHTML = `<tr><td colspan="${9 + phLoaiTypes.length}" class="py-16 text-center text-gray-400">
+                    <i class="fas fa-inbox text-4xl mb-3 block"></i>Không có dữ liệu phù hợp
+                </td></tr>`;
+                updateResultCount();
                 return;
             }
 
@@ -809,7 +836,10 @@
                 'Hộ cá nhân': 'bg-yellow-100 text-yellow-800',
             };
 
-            const rows = filteredStats.map((s, idx) => {
+            const startIdx = (currentPage - 1) * PAGE_SIZE;
+            const pageItems = filteredStats.slice(startIdx, startIdx + PAGE_SIZE);
+
+            const rows = pageItems.map((s, idx) => {
                 const rowBg = idx % 2 === 0 ? '#ffffff' : '#f9fafb';
                 const badgeClass = loaihinhColors[s.loaihinh] || 'bg-gray-100 text-gray-700';
                 const typeCells = phLoaiTypes.map(t => {
@@ -818,56 +848,54 @@
                 }).join('');
 
                 return `<tr class="hover:bg-blue-50 transition-colors" style="background:${rowBg}">
-                <td class="sc-stt px-2 py-2.5 text-xs text-gray-400 text-center" style="background:${rowBg}">${idx + 1}</td>
-                <td class="sc-loai px-2 py-2.5" style="background:${rowBg}">
-                    ${s.loaihinh ? `<span class="type-badge ${badgeClass}">${s.loaihinh}</span>` : ''}
-                </td>
-                <td class="sc-ten px-3 py-2.5 text-xs font-semibold text-gray-800" style="background:${rowBg};white-space:normal;word-break:break-word">${s.tenDonVi}</td>
-                <td class="sc-dia px-3 py-2.5 text-xs text-gray-500" style="background:${rowBg}" title="${s.diaChi}">${s.diaChi}</td>
-                <td class="sc-ndd px-3 py-2.5 text-xs text-gray-600 " style="background:${rowBg}" title="${s.nguoiDaiDien}">${s.nguoiDaiDien}</td>
-                <td class="sc-dt  px-3 py-2.5 text-xs text-gray-600 whitespace-nowrap" style="background:${rowBg}">${s.dienThoai ? `<a href="tel:${s.dienThoai}" class="hover:text-blue-600">${s.dienThoai}</a>` : ''}</td>
-                <td class="px-3 py-2.5 text-xs text-gray-600 cell-truncate" style="max-width:150px">${s.email ? `<a href="mailto:${s.email}" class="text-blue-500 hover:underline" title="${s.email}">${s.email}</a>` : ''}</td>
-                <td class="px-3 py-2.5 text-center font-bold text-indigo-700">${s.dangKhaiThac || ''}</td>
-                <td class="px-3 py-2.5 text-center font-bold text-green-700">${s.total}</td>
-                ${typeCells}
-            </tr>`;
+                    <td class="sc-stt px-2 py-2.5 text-xs text-gray-400 text-center" style="background:${rowBg}">${startIdx + idx + 1}</td>
+                    <td class="sc-loai px-2 py-2.5" style="background:${rowBg}">
+                        ${s.loaihinh ? `<span class="type-badge ${badgeClass}">${s.loaihinh}</span>` : ''}
+                    </td>
+                    <td class="sc-ten px-3 py-2.5 text-xs font-semibold text-gray-800" style="background:${rowBg};white-space:normal;word-break:break-word">${s.tenDonVi}</td>
+                    <td class="sc-dia px-3 py-2.5 text-xs text-gray-500" style="background:${rowBg}" title="${s.diaChi}">${s.diaChi}</td>
+                    <td class="sc-ndd px-3 py-2.5 text-xs text-gray-600" style="background:${rowBg}" title="${s.nguoiDaiDien}">${s.nguoiDaiDien}</td>
+                    <td class="sc-dt px-3 py-2.5 text-xs text-gray-600 whitespace-nowrap" style="background:${rowBg}">${s.dienThoai ? `<a href="tel:${s.dienThoai}" class="hover:text-blue-600">${s.dienThoai}</a>` : ''}</td>
+                    <td class="px-3 py-2.5 text-xs text-gray-600 cell-truncate" style="max-width:150px">${s.email ? `<a href="mailto:${s.email}" class="text-blue-500 hover:underline" title="${s.email}">${s.email}</a>` : ''}</td>
+                    <td class="px-3 py-2.5 text-center font-bold text-indigo-700">${s.dangKhaiThac || ''}</td>
+                    <td class="px-3 py-2.5 text-center font-bold text-green-700">${s.total}</td>
+                    ${typeCells}
+                </tr>`;
             });
 
-            tbody.innerHTML = rows.join('');
-
-            // Footer tổng
             const totalRow = document.createElement('tr');
             totalRow.className = 'footer-row font-bold border-t-2 border-blue-200';
             totalRow.style.backgroundColor = '#eff6ff';
             let footerHtml = `
-            <td class="sc-stt px-2 py-3 text-center text-xs text-blue-700 font-bold" style="background:#eff6ff"></td>
-            <td class="sc-loai px-2 py-3 text-xs text-blue-700 font-bold" style="background:#eff6ff">TỔNG</td>
-            <td class="sc-ten px-3 py-3 text-xs text-blue-700 font-bold" style="background:#eff6ff">${filteredStats.length} đơn vị</td>
-            <td class="sc-dia px-3 py-3" style="background:#eff6ff"></td>
-            <td class="sc-ndd px-3 py-3" style="background:#eff6ff"></td>
-            <td class="sc-dt  px-3 py-3" style="background:#eff6ff"></td>
-            <td class="px-3 py-3"></td>
-            <td class="px-3 py-3 text-center text-indigo-700 font-bold">${filteredSummary.totalDKT}</td>
-            <td class="px-3 py-3 text-center text-green-700 font-bold">${filteredSummary.totalPH}</td>`;
+                <td class="sc-stt px-2 py-3 text-center text-xs text-blue-700 font-bold" style="background:#eff6ff"></td>
+                <td class="sc-loai px-2 py-3 text-xs text-blue-700 font-bold" style="background:#eff6ff">TỔNG</td>
+                <td class="sc-ten px-3 py-3 text-xs text-blue-700 font-bold" style="background:#eff6ff">${filteredStats.length} đơn vị</td>
+                <td class="sc-dia px-3 py-3" style="background:#eff6ff"></td>
+                <td class="sc-ndd px-3 py-3" style="background:#eff6ff"></td>
+                <td class="sc-dt px-3 py-3" style="background:#eff6ff"></td>
+                <td class="px-3 py-3"></td>
+                <td class="px-3 py-3 text-center text-indigo-700 font-bold">${filteredSummary.totalDKT}</td>
+                <td class="px-3 py-3 text-center text-green-700 font-bold">${filteredSummary.totalPH}</td>`;
+
             phLoaiTypes.forEach(t => {
                 footerHtml += `<td class="px-3 py-3 text-center text-blue-700">${filteredSummary.typeTotals[t] || 0}</td>`;
             });
             totalRow.innerHTML = footerHtml;
-            document.getElementById('tableBody').appendChild(totalRow);
 
+            tbody.innerHTML = rows.join('');
+            tbody.appendChild(totalRow);
+            updateResultCount();
         }
 
-        // ============================================================
-        // EXPORT EXCEL
-        // ============================================================
         function exportToExcel() {
-            if (filteredStats.length === 0) { alert('Không có dữ liệu để xuất!'); return; }
+            if (filteredStats.length === 0) {
+                alert('Không có dữ liệu để xuất!');
+                return;
+            }
 
             const wb = XLSX.utils.book_new();
             const today = new Date().toLocaleString('vi-VN');
             const summary = calculateSummary(filteredStats);
-
-            // ---- Sheet 1: Thống kê theo đơn vị ----
             const headers = [
                 'STT', 'Loại hình', 'Tên đơn vị', 'Địa chỉ',
                 'Người đại diện', 'Điện thoại', 'Email',
@@ -875,15 +903,14 @@
                 ...phLoaiTypes
             ];
 
-            const titleRow = [`THỐNG KÊ PHÙ HIỆU XE THEO ĐƠN VỊ VẬN TẢI`];
-            const subtitleRow = [`Phù hiệu còn hiệu lực — phân theo loại`];
+            const titleRow = ['THỐNG KÊ PHÙ HIỆU XE THEO ĐƠN VỊ VẬN TẢI'];
+            const subtitleRow = ['Phù hiệu còn hiệu lực — phân theo loại'];
             const dateRow = [`Ngày xuất: ${today}`];
             const summaryRow = [`Tổng số: ${filteredStats.length} đơn vị — ${summary.totalPH} phù hiệu còn hiệu lực`];
-
             const data = [titleRow, subtitleRow, dateRow, summaryRow, [], headers];
 
             filteredStats.forEach((s, idx) => {
-                const row = [
+                data.push([
                     idx + 1,
                     s.loaihinh,
                     s.tenDonVi,
@@ -894,41 +921,31 @@
                     s.dangKhaiThac || 0,
                     s.total,
                     ...phLoaiTypes.map(t => s.byType[t] || 0)
-                ];
-                data.push(row);
+                ]);
             });
 
-            // Dòng tổng
-            const sumRow = [
+            data.push([]);
+            data.push([
                 '', '', '', '', '', '', 'TỔNG CỘNG',
                 summary.totalDKT,
                 summary.totalPH,
                 ...phLoaiTypes.map(t => summary.typeTotals[t] || 0)
-            ];
-            data.push([]);
-            data.push(sumRow);
+            ]);
 
             const ws = XLSX.utils.aoa_to_sheet(data);
-
-            // Độ rộng cột
-            const colWidths = [
+            ws['!cols'] = [
                 { wch: 5 }, { wch: 16 }, { wch: 38 }, { wch: 40 },
                 { wch: 22 }, { wch: 14 }, { wch: 28 }, { wch: 13 }, { wch: 14 },
                 ...phLoaiTypes.map(() => ({ wch: 14 }))
             ];
-            ws['!cols'] = colWidths;
-
-            // Merge title
             ws['!merges'] = [
                 { s: { r: 0, c: 0 }, e: { r: 0, c: headers.length - 1 } },
                 { s: { r: 1, c: 0 }, e: { r: 1, c: headers.length - 1 } },
                 { s: { r: 2, c: 0 }, e: { r: 2, c: headers.length - 1 } },
                 { s: { r: 3, c: 0 }, e: { r: 3, c: headers.length - 1 } },
             ];
-
             XLSX.utils.book_append_sheet(wb, ws, 'Thống kê theo đơn vị');
 
-            // ---- Sheet 2: Tổng hợp theo loại phù hiệu ----
             const ws2Data = [
                 ['TỔNG HỢP THEO LOẠI PHÙ HIỆU'],
                 [`Ngày xuất: ${today}`],
@@ -949,9 +966,6 @@
             XLSX.writeFile(wb, fileName);
         }
 
-        // ============================================================
-        // UTILS
-        // ============================================================
         function removeAccents(str) {
             return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
         }
@@ -964,9 +978,10 @@
             document.getElementById('loading-text').textContent = text;
         }
 
-        // ============================================================
-        // TOGGLE FILTER PANEL
-        // ============================================================
+        function setLoadingSub(text) {
+            document.getElementById('loading-sub').textContent = text;
+        }
+
         function toggleFilter() {
             const panel = document.getElementById('filterPanel');
             const btn = document.getElementById('btnToggleFilter');
@@ -984,9 +999,6 @@
             }
         }
 
-        // ============================================================
-        // INIT
-        // ============================================================
         loadData();
     </script>
 </body>
